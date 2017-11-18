@@ -1,0 +1,449 @@
+This document will explain the manipulation of the raw data utilized for the NJDOT Pervious Concrete Study 2017
+
+The data was truncated to begin July 18, 2017 0:00:00 and end August 22, 2017 13:55:00. This was to cut out setup and ensure time was aligned.
+
+Basic Layout:
+Refer to Excel File, Master Sensor Sheet for Slab Alignment Parameters
+The raw input data is stored in TABLES
+Modified data (and any verifications) were conducted in seperate mat files.
+Final data to be used is aligned in Structs (S1=Slab1,...,S8=Slab8)
+Sensors did not move throughout this period. 5 net radiometers means not all 8 slabs have sufficient data unless data is borrowed from other net radiometers (which is not done at this moment)
+ 
+
+The following data inserted directly into Slab Structs remained un-modified (or otherwise unused but collected):
+		Table:Load1 
+			Sup
+			SDn
+			LUp
+			LDn
+			CNR4TK
+			RsNet
+			RINet
+			Albedo
+			Rn
+			LupCO
+			LdnCo
+			SR01DN
+			IR01Up
+			IR01Dn
+			NR01TC
+			NR01TK
+			NetRs
+			NetRI
+			Albedo_2
+			UpTot
+			DnTot
+			NetTot
+			IR01UpCo
+			IR01DnCo
+			Rain_in
+			VWC
+			EC
+			T
+			P
+			PA
+			VR
+			VW
+			PA_uS
+			PA_uS_2
+			BP_mbar
+			AirTC
+			RH
+		Table: TDR
+			VWC_1
+			EC
+			T
+			P
+			PA
+			VR
+			PA_uS_2
+		Table: Weather
+			Roof_AmbT_AvgDegC
+			Rf_RH_Sample
+			RoofBP_Avgmbar
+			TB_Rain_Totalin
+			Roof_W_Speed_Avgms
+			Rf_W_dirdeg
+		Table:Thermo
+			Red_SR01Up
+			Red_SR01Dn
+			Red_IR01Up
+			Red_IR01Dn
+			Red_NR01TK
+			Red_NetRs
+			Red_NetRI
+			Red_Albedo
+			Red_UpTot
+			Red_DnTot
+			Red_NetTot
+			Red_IR01UpCo
+			Red_IR01DnCo
+			USP8_COR
+		Table:Solar1
+			Blue_SR01Up_Avg
+			Blue_SR01Dn_Avg
+			Blue_IR01Up_Avg
+			Blue_IR01Dn_Avg
+			Blue)NR01TC_Avg
+			Blue_NR01TK_Avg
+			Blue_NetRs_Avg
+			Blue_NetRI_Avg
+			Blue_Albedo_Avg
+			Blue_UpTot_Avg
+			Blue_DnTot_Avg
+			Blue_NetTot_Avg
+			Blue_IR01UpCo_Avg
+			Blue_IR01DnCo_Avg
+			CNR2_NetSW_Avg
+			CNR2_NetLW_Avg
+			CNR2_NetRad_Avg
+		Table:Temp
+			USP1_Avg
+			USP1_COR_Avg
+			USP2_Avg
+			USP2_COR_Avg
+			USP3_Avg
+			USP3_COR_Avg
+			USP4_Avg
+			USP4_COR_Avg
+			USP5_Avg
+			USP5_COR_Avg
+			USP6_Avg
+			USP6_COR_Avg
+			USP7_Avg
+			USP7_COR_Avg
+			E1T1_Avg
+			E1T2_Avg
+			E1T2_COR_Avg
+			E1T3_Avg			
+			E1T4_Avg
+			WS_ms_Avg
+			WindDir
+The following Data was modified or manipulated (method described later):
+		Table:Load1
+			LoadCell1
+			LoadCell2
+			LoadCell3
+			LoadCell4
+			LoadCell5
+			LoadCell6
+			LoadCell7
+			LoadCell8
+			LoadCell9
+			LoadCell10
+			LoadCell11
+			LoadCell12
+			LoadCell13
+			LoadCell14
+			LoadCell15
+			LoadCell16
+		Table:TDR
+			VWC_1_CORR
+			VW_2
+		Table:Thermo
+			P1T1_COR
+			P1T2_COR
+			P1T3_COR
+			P1T4_COR
+			P2T1_COR
+			P2T2_COR
+			P2T3_COR
+			P2T4_COR
+			P3T1_COR
+			P3T2_COR
+			P3T3_COR
+			P3T4_COR
+			P4T1_COR
+			P4T2_COR
+			P4T3_COR
+			P4T4_COR
+			P5T1_COR
+			P5T2_COR
+			P5T3_COR
+			P5T4_COR
+			P6T1_COR
+			P6T2_COR
+			P6T3_COR
+			P6T4_COR
+			P7T1_COR
+			P7T2_COR
+			P7T3_COR
+			P7T4_COR
+			P8T1_COR
+			P8T2_COR
+			P8T3_COR
+			P8T4_COR
+		Table:Temp
+			E1_T1_COR_Avg
+			E1_T3_COR_Avg
+			E1_T4_COR_Avg
+The following data is in manufactured tables (pulled from Raw or Calculated for comparisons)
+		Table:NOAAP
+			Roof_AmbT_AvgDegC
+			Rf_RH_Sample
+			RoofBP_Avgmbar
+			Rain
+			Roof_W_Speed_Avgms
+			Rf_W_dirdeg
+			RainEWR (From NOAA dailies) (Measured Increments collated using Vlookup in Excel, 0 for missing)
+			RainSOM (From NOAA dailies)(Measured Increments collated using Vlookup in Excel, 0 for missing)
+		Table:BPTot
+			BPRoof (mbar)
+			BPGround (mbar)
+			BPRoofHG = (BPRoof.*0.750062)
+			BPGroundHG = (BPGround.*0.750062)
+			Avg = (BPRoofHG+BPRoofHG)/2
+		Table:SoilT (corrected soil vwc and rain bucket for easy comparisons
+			VWC1 = VWC_1_CORR(1:10247)->>SWT-Level_14= VWC_1_CORRlong(1:16384)-->SWT DeNoiser= VWC1_F1-->Trim((:,10248:end)=[])=S1(...S8).VWC3
+			VWC2 = VW_2(1:10247)->>SWT-Level_14= VW_2long(1:16384)-->SWT DeNoiser= VWC2_F1-->Trim((:,10248:end)=[])=S1(...S8).VWC6
+			RB (Rain_in)
+		Table:STAvg
+			S1_A = (P1T1_COR+P1T2_COR+P1T3_COR+P1T4_COR)/4
+			S2_A = (P2T1_COR+P2T2_COR+P2T3_COR+P2T4_COR)/4
+			S3_A = (P3T1_COR+P3T2_COR+P3T3_COR+P3T4_COR)/4
+			S4_A = (P4T1_COR+P4T2_COR+P4T3_COR+P4T4_COR)/4
+			S5_A = (P5T1_COR+P5T2_COR+P5T3_COR+P5T4_COR)/4
+			S6_A = (P6T1_COR+P6T2_COR+P6T3_COR+P6T4_COR)/4
+			S7_A = (P7T1_COR+P7T2_COR+P7T3_COR+P7T4_COR)/4
+			S8_A = (P8T1_COR+P8T2_COR+P8T3_COR+P8T4_COR)/4
+		Table:SlabMassDry (Raw Data in MSExcel entitled, "AV% Use for Moisture Content_3")
+			S1 = ((Slab GsB*1000)*Slab Volume) = (2.27530435596316*1000)*0.113267386
+			S2 = ((Slab GsB*1000)*Slab Volume) = (2.38963455491251*1000)*0.113267386
+			S3 = ((Slab GsB*1000)*Slab Volume) = (1.84801681928007*1000)*0.113267386
+			S4 = ((Slab GsB*1000)*Slab Volume) = (1.86019750692825*1000)*0.113267386
+			S5 = ((Slab GsB*1000)*Slab Volume) = (1.99370930034179*1000)*0.113267386
+			S6 = ((Slab GsB*1000)*Slab Volume) = (1.89239339780893*1000)*0.113267386
+			S7 = ((Slab GsB*1000)*Slab Volume) = (2.03434217951915*1000)*0.113267386
+			S8 = ((Slab GsB*1000)*Slab Volume) = (2.08097977024855*1000)*0.113267386
+		Table:SlabMaxVolH2O_1 (Raw Data in MSExcel entitled, "AV% Use for Moisture Content_3")
+			S1 = (Slab Volume*(SlabAV%/100)) = (0.113267386*(7.681430916/100)) 
+			S2 = (Slab Volume*(SlabAV%/100)) = (0.113267386*(6.50901767739323/100))
+			S3 = (Slab Volume*(SlabAV%/100)) = (0.113267386*(32.4477861233062/100))
+			S4 = (Slab Volume*(SlabAV%/100)) = (0.113267386*(31.7132249493222/100))
+			S5 = (Slab Volume*(SlabAV%/100)) = (0.113267386*(26.6614119829721/100))
+			S6 = (Slab Volume*(SlabAV%/100)) = (0.113267386*(31.6033608102156/100))
+			S7 = (Slab Volume*(SlabAV%/100)) = (0.113267386*(26.9068215340911/100))
+			S8 = (Slab Volume*(SlabAV%/100)) = (0.113267386*(24.628564629674/100))
+		Table:LCnoFILT (Raw Data in MSExcel entitled, "Load Cell Checker") ((Calibration Curves from MS Excel LC Calibration File entitled, "Load Cell Calibration_F_JH_6.15.17"))
+			LCL1 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept = ((LoadCell1*1105.73061375196)+(-10.0197982350857))
+			LCK1 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept = ((LoadCell1*1105.73061375196)+(-10.0197982350857))*0.453592
+			LCL2 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept = ((LoadCell2*1101.38045642183)+(-2.64396000299137))
+			LCK2 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept = ((LoadCell2*1101.38045642183)+(-2.64396000299137))*0.453592
+			LCL3 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept = ((LoadCell3*1100.06138197716)+(-1.7198184988523))
+			LCK3 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept = ((LoadCell3*1100.06138197716)+(-1.7198184988523))*0.453592
+			LCL4 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept = ((LoadCell4*1086.50986758661)+(48.7242743591355))
+			LCK4 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept = ((LoadCell4*1086.50986758661)+(48.7242743591355))*0.453592
+			LCL5 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept = ((LoadCell5*729.399075317127)+(-169.995461163661))
+			LCK5 = LCL5= ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept = ((LoadCell5*729.399075317127)+(-169.995461163661))*0.453592
+			LCL6 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept = ((LoadCell6*1079.01981532732)+(21.69529928110760))
+			LCK6 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept = ((LoadCell6*1079.01981532732)+(21.69529928110760))*0.453592
+			LCL7 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept = ((LoadCell7*1091.6924988182)+(-33.0293879964298))
+			LCK7 = LCL7= ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept = ((LoadCell7*1091.6924988182)+(-33.0293879964298))*0.453592
+			LCL8 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept = ((LoadCell8*1098.80276460327)+(12.3835264170225))
+			LCK8 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept = ((LoadCell8*1098.80276460327)+(12.3835264170225))*0.453592
+			LCL9 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept = ((LoadCell9*1106.59774467632)+(-16.3150817192261))
+			LCK9 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept = ((LoadCell9*1106.59774467632)+(-16.3150817192261))*0.453592
+			LCL10 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept = ((LoadCell10*1110.62583390164)+(155.342147032535))
+			LCK10 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept = ((LoadCell10*1110.62583390164)+(155.342147032535))*0.453592
+			LCL11 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept = ((LoadCell11*1094.04990491444)+(-29.3077437057457))
+			LCK11 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept = ((LoadCell11*1094.04990491444)+(-29.3077437057457))*0.453592
+			LCL12 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept = ((LoadCell12*1107.82006624367)+(12.2432677282741))
+			LCK12 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept = ((LoadCell12*1107.82006624367)+(12.2432677282741))*0.453592
+			LCL13 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept =((LoadCEll13*1053.02298585466)+(83.2563157432627))
+			LCK13 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept =((LoadCEll13*1053.02298585466)+(83.2563157432627))*0.453592
+			LCL14 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept =((LoadCell14*1165.31392859377)+(-180.204752013934))
+			LCK14 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept =((LoadCell14*1165.31392859377)+(-180.204752013934))*0.453592
+			LCL15 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept =((LoadCell15*1106.26483985594)+(-28.5932737301472))
+			LCK15 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept =((LoadCell15*1106.26483985594)+(-28.5932737301472))*0.453592 
+			LCL16 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept = ((LoadCell16*1101.80194225694)+(10.95917490907560))
+			LCK16 = ((Input Voltage (mV/V))*Calibration Slope)+Calibration Intercept = ((LoadCell16*1101.80194225694)+(10.95917490907560))*0.453592
+		Table:SlabLoad_LC_FILT (Only working LC, Extended by SWT-Level_14(right 1:16384),Processed by Wavelet App - SWT DeNoiser, Wavelet (db_14), Decomp Level 8, Idealized Intervals (different for each), then truncated from right back to 1:10247)
+			LC1 = 'LCKF_4.mat' LCK1(1:10247)->>SWT-Level_14= LCK1long(1:16384)-->SWT DeNoiser= LCK1_F1-->Trim((:,10248:end)=[])=LC1
+			LC2 = 'LCKF_4.mat' LCK2(1:10247)->>SWT-Level_14= LCK2long(1:16384)-->SWT DeNoiser= LCK2_F1-->Trim((:,10248:end)=[])=LC2
+			LC3 = 'LCKF_4.mat' LCK3(1:10247)->>SWT-Level_14= LCK3long(1:16384)-->SWT DeNoiser= LCK3_F1-->Trim((:,10248:end)=[])=LC3
+			LC4 = 'LCKF_4.mat' LCK4(1:10247)->>SWT-Level_14= LCK4long(1:16384)-->SWT DeNoiser= LCK4_F1-->Trim((:,10248:end)=[])=LC4
+			LC6 = 'LCKF_4.mat' LCK6(1:10247)->>SWT-Level_14= LCK6long(1:16384)-->SWT DeNoiser= LCK5_F1-->Trim((:,10248:end)=[])=LC5
+			LC7 = 'LCKF_4.mat' LCK7(1:10247)->>SWT-Level_14= LCK7long(1:16384)-->SWT DeNoiser= LCK7_F1-->Trim((:,10248:end)=[])=LC7
+			LC10 = 'LCKF_4.mat' LCK10(1:10247)->>SWT-Level_14= LCK10long(1:16384)-->SWT DeNoiser= LCK10_F1-->Trim((:,10248:end)=[])=LC10
+			LC11 = 'LCKF_4.mat' LCK11(1:10247)->>SWT-Level_14= LCK11long(1:16384)-->SWT DeNoiser= LCK11_F1-->Trim((:,10248:end)=[])=LC11
+			LC13 = 'LCKF_4.mat' LCK13(1:10247)->>SWT-Level_14= LCK13long(1:16384)-->SWT DeNoiser= LCK13_F1-->Trim((:,10248:end)=[])=LC13
+			LC15 = 'LCKF_4.mat' LCK15(1:10247)->>SWT-Level_14= LCK15long(1:16384)-->SWT DeNoiser= LCK15_F1-->Trim((:,10248:end)=[])=LC15
+			LC16 = 'LCKF_4.mat' LCK16(1:10247)->>SWT-Level_14= LCK16long(1:16384)-->SWT DeNoiser= LCK16_F1-->Trim((:,10248:end)=[])=LC16
+		Table:UNCOR_Slab_Load (Calculate slab load using best fitting filtered load cell data) (fits are "the best" but none were great)
+		Minimal alignment found, tried to align to NOAAP.Rain,NOAAP.RainEWR,NOAAPRainSOM,SoilT.VWC1,ST(by slab#)... Many of these plots are saved and availible
+			S1 = (LC1+LC2)/2 (=L1 in 'LCKF_4.mat)
+			S2 = (LC3+LC4)/2 (=L2 in 'LCKF_4.mat)
+			S3 = (LC6) (=L3 in 'LCKF_4.mat)
+			S4 = (LC7) (=L4 in 'LCKF_4.mat)
+			S5 = (LC10) (=L5 in 'LCKF_4.mat)
+			S6 = (LC11) (=L6 in 'LCKF_4.mat)
+			S7 = (LC13) (=L7 in 'LCKF_4.mat)
+			S8 = (LC15+LC16)/2 (=L8 in 'LCKF_4.mat)
+		Table:LCMASSCORR (Corrected relative mass of each slab) Set minimum of signal value to dry slab mass-->set max signal value to max mass H2O, attained curve. Raw Data in MSExcel entitled, "AV% Use for Moisture Content_3" 
+		Decision finally made to go relative. Cannot really trust alignment. Values so far different and unrealistic that cannot use force equation to calculate running slab mass
+		(SSDm=Dunked Sample, 5 min waiting period (Laboratory Samples) = ((SampleWetMass-SampleMassDry)/SampleMassDry)*100
+		(L1min=SlabMassDry) (set minimum filtered LC Load to dry slab mass)
+		MaxWetMass = ((SlabMassDry*(%SSDm/100))+SlabMassDry)
+		CORR Curve Determined = (Drymass/wetmass)/(LCsigmin/LCsigmax) = y=mx+b
+			S1 = ((CORRCurve slope*L1)+CORRCurve intercept) = ((0.131947098207342*L1) + 223.712664681996000)
+			S2 = ((CORRCurve slope*L2)+CORRCurve intercept) = ((0.106363253914283*L2) + 241.878567319069000)
+			S3 = ((CORRCurve slope*L3)+CORRCurve intercept) = ((0.158660046690167*L3) + 176.109308544352000)
+			S4 = ((CORRCurve slope*L4)+CORRCurve intercept) = ((0.072410625061040*L4) + 195.442812055721000)
+			S5 = ((CORRCurve slope*L5)+CORRCurve intercept) = ((2.441277855795490*L5)- 325.472596204063000)
+			S6 = ((CORRCurve slope*L6)+CORRCurve intercept) = ((0.067424161973295*L6) + 199.894324106874000)
+			S7 = ((CORRCurve slope*L7)+CORRCurve intercept) = ((0.221962408359595*L7)+ 179.279017685021000)
+			S8 = ((CORRCurve slope*L8)+CORRCurve intercept) = ((0.674221220324884*L8) + 76.788384319397700)
+		Table:H2OD (Raw Data in MSExcel entitled, "AV% Use for Moisture Content_3")
+		H2O Density Curve Determined (Density H2O(kg/m^3)/TempC)(table from internet) = 3rd order Polynomial (y = 2E-05x3 - 0.0063x2 + 0.0269x + 1000)	
+			S1 = S1_H20_Corr=((0.00002*ST1_A.^3)-(0.0063*ST1_A.^2)+(0.0269*ST1_A)+1000)
+			S2 = S2_H20_Corr=((0.00002*ST2_A.^3)-(0.0063*ST2_A.^2)+(0.0269*ST2_A)+1000)
+			S3 = S3_H20_Corr=((0.00002*ST3_A.^3)-(0.0063*ST3_A.^2)+(0.0269*ST3_A)+1000)
+			S4 = S4_H20_Corr=((0.00002*ST4_A.^3)-(0.0063*ST4_A.^2)+(0.0269*ST4_A)+1000)
+			S5 = S5_H20_Corr=((0.00002*ST5_A.^3)-(0.0063*ST5_A.^2)+(0.0269*ST5_A)+1000)
+			S6 = S6_H20_Corr=((0.00002*ST6_A.^3)-(0.0063*ST6_A.^2)+(0.0269*ST6_A)+1000)
+			S7 = S7_H20_Corr=((0.00002*ST7_A.^3)-(0.0063*ST7_A.^2)+(0.0269*ST7_A)+1000)
+			S8 = S8_H20_Corr=((0.00002*ST8_A.^3)-(0.0063*ST8_A.^2)+(0.0269*ST8_A)+1000)
+		Table:MH2O (Raw Data in MSExcel entitled, "AV% Use for Moisture Content_3")
+		Did not normalize for density since relative measurement.
+		SM.DS1...SM.DS8 = SlabMassDry respective
+			S1 = MH2O1 = LCMASSCORR.S1-SM.DS1
+			S2 = MH2O2 = LCMASSCORR.S2-SM.DS2
+			S3 = MH2O3 = LCMASSCORR.S3-SM.DS3
+			S4 = MH2O4 = LCMASSCORR.S4-SM.DS4
+			S5 = MH2O5 = LCMASSCORR.S5-SM.DS5
+			S6 = MH2O6 = LCMASSCORR.S6-SM.DS6
+			S7 = MH2O7 = LCMASSCORR.S7-SM.DS7
+			S8 = MH2O8 = LCMASSCORR.S8-SM.DS
+		Table:SVWC_F
+			S1 = (MassH20/S1_H20_Corr/SlabVol*100) = (MH2O_1a)./(S1_H20_Corr')./(SV.SV1).*100
+			S2 = (MassH20/S1_H20_Corr/SlabVol*100) = (MH2O_2a)./(S2_H20_Corr')./(SV.SV2).*100
+			S3 = (MassH20/S1_H20_Corr/SlabVol*100) = (MH2O_3a)./(S3_H20_Corr')./(SV.SV3).*100
+			S4 = (MassH20/S1_H20_Corr/SlabVol*100) = (MH2O_4a)./(S4_H20_Corr')./(SV.SV4).*100
+			S5 = (MassH20/S1_H20_Corr/SlabVol*100) = (MH2O_5a)./(S5_H20_Corr')./(SV.SV5).*100
+			S6 = (MassH20/S1_H20_Corr/SlabVol*100) = (MH2O_6a)./(S6_H20_Corr')./(SV.SV6).*100
+			S7 = (MassH20/S1_H20_Corr/SlabVol*100) = (MH2O_7a)./(S7_H20_Corr')./(SV.SV7).*100
+			S8 = (MassH20/S1_H20_Corr/SlabVol*100) = (MH2O_8a)./(S8_H20_Corr')./(SV.SV8).*100)
+		Other
+			SoilTK = Soil Temp Kelvin = SoilT+273.15
+			He = Latent Heat of Vaporization= 2.5e6
+			ETK = Near Slab Air Temp = E1T1_COR Avg+273.15
+			SBC = Stefan Boltzman Constant = 5.67e-8
+Using the data from above, the following items were put into Structs per slab:
+		Struct S1
+			D: [10247x1 datetime] = Date with Timestamp
+			USP: [10247x1 double] = Under Slab Probe
+			ST1: [10247x1 double] = 1.27cm Depth Slab Temp (1/2")
+			ST2: [10247x1 double] = 2.54cm Depth Slab Temp (1")
+			ST3: [10247x1 double] = 5.08cm Depth Slab Temp (2")
+			ST4: [10247x1 double] = 10.16cm Depth Slab Temp (3.5")
+			SUP: [10247x1 double] = Shortwave Radiation Up
+			SDN: [1x10247 double] = Shortwave Radiation Down
+			LUP: [10247x1 double] = Longwave Radiation Up
+			LDN: [10247x1 double] = Longwave Radiation Down
+			RN: [10247x1 double] = Net Radiation
+			AMB: [10247x1 double] = Ambient Temperature (roof unit)
+			RH: [10247x1 double] = Relative Humidity
+			RAIN: [10247x1 double] = Rain Bucket Roof
+			WS: [10247x1 double] = Ground Wind Speed
+			BP: [10247x1 double] = Ground Barometric Pressure
+			VWC3: [1x10247 double] = Filtered Volumetric Water Content 3" depth (2.54cm)
+			VWC6: [1x10247 double] = Filtered Volumetric Water Content 6" depth (15.24cm)
+			SOILT: [10247x1 double] = Soil Temperature
+			E1: [10247x1 double] = Near Slab Air Temp 1cm Height (.3937")
+			E3: [10247x1 double] = Near Slab Air Temp 6cm Height (2.3622")
+			E4: [10247x1 double] = Near Slab Air Temp 25cm Height (9.84252")
+			MH2O: [10247x1 double] = Mass H2O
+		Struct S2
+			D: [10247x1 datetime] = Date with Timestamp
+			USP: [10247x1 double] = Under Slab Probe
+			ST1: [10247x1 double] = 1.27cm Depth Slab Temp (1/2")
+			ST2: [10247x1 double] = 2.54cm Depth Slab Temp (1")
+			ST3: [10247x1 double] = 5.08cm Depth Slab Temp (2")
+			ST4: [10247x1 double] = 10.16cm Depth Slab Temp (3.5")
+			AMB: [10247x1 double] = Ambient Temperature (roof unit)
+			MH2O: [10247x1 double] = Mass H2O
+		Struct S3
+			D: [10247x1 datetime] = Date with Timestamp
+			USP: [10247x1 double] = Under Slab Probe
+			ST1: [10247x1 double] = 1.27cm Depth Slab Temp (1/2")
+			ST2: [10247x1 double] = 2.54cm Depth Slab Temp (1")
+			ST3: [10247x1 double] = 5.08cm Depth Slab Temp (2")
+			ST4: [10247x1 double] = 10.16cm Depth Slab Temp (3.5")
+			RN: [10247x1 double] = Net Radiation
+			AMB: [10247x1 double] = Ambient Temperature (roof unit)
+			MH2O: [10247x1 double] = Mass H2O
+		Struct S4
+			D: [10247x1 datetime] = Date with Timestamp
+			USP: [10247x1 double] = Under Slab Probe
+			ST1: [10247x1 double] = 1.27cm Depth Slab Temp (1/2")
+			ST2: [10247x1 double] = 2.54cm Depth Slab Temp (1")
+			ST3: [10247x1 double] = 5.08cm Depth Slab Temp (2")
+			ST4: [10247x1 double] = 10.16cm Depth Slab Temp (3.5")
+			AMB: [10247x1 double] = Ambient Temperature (roof unit)
+			RN: [10247x1 double] = Net Radiation
+			MH2O: [10247x1 double] = Mass H2O
+		Struct S5
+			D: [10247x1 datetime] = Date with Timestamp
+			USP: [10247x1 double] = Under Slab Probe
+			ST3: [10247x1 double] = 5.08cm Depth Slab Temp (2")
+			ST4: [10247x1 double] = 10.16cm Depth Slab Temp (3.5")
+			AMB: [10247x1 double] = Ambient Temperature (roof unit)
+			MH2O: [10247x1 double] = Mass H2O
+		Struct S6
+			D: [10247x1 datetime] = Date with Timestamp
+			USP: [10247x1 double] = Under Slab Probe
+			ST1: [10247x1 double] = 1.27cm Depth Slab Temp (1/2")
+			ST2: [10247x1 double] = 2.54cm Depth Slab Temp (1")
+			ST3: [10247x1 double] = 5.08cm Depth Slab Temp (2")
+			ST4: [10247x1 double] = 10.16cm Depth Slab Temp (3.5")
+			AMB: [10247x1 double] = Ambient Temperature (roof unit)
+			RN: [10247x1 double] = Net Radiation
+			MH2O: [10247x1 double] = Mass H2O
+		Struct S7
+			D: [10247x1 datetime] = Date with Timestamp
+			USP: [10247x1 double] = Under Slab Probe
+			ST1: [10247x1 double] = 1.27cm Depth Slab Temp (1/2")
+			ST2: [10247x1 double] = 2.54cm Depth Slab Temp (1")
+			ST3: [10247x1 double] = 5.08cm Depth Slab Temp (2")
+			ST4: [10247x1 double] = 10.16cm Depth Slab Temp (3.5")
+			RN: [10247x1 double] = Net Radiation
+			AMB: [10247x1 double] = Ambient Temperature (roof unit)
+			MH2O: [10247x1 double] = Mass H2O
+		Struct S8
+			D: [10247x1 datetime] = Date with Timestamp
+			USP: [10247x1 double] = Under Slab Probe
+			ST1: [10247x1 double] = 1.27cm Depth Slab Temp (1/2")
+			ST2: [10247x1 double] = 2.54cm Depth Slab Temp (1")
+			ST3: [10247x1 double] = 5.08cm Depth Slab Temp (2")
+			ST4: [10247x1 double] = 10.16cm Depth Slab Temp (3.5")
+			RN: [10247x1 double] = Net Radiation
+			AMB: [10247x1 double] = Ambient Temperature (roof unit)
+			MH2O: [10247x1 double] = Mass H2O
+Qg = Ground Heat Flux
+	Qg=S1.STK*S1.SBC
+Qh = Sensible Heat Flux
+	Qh=S1.EK*S1.SBC
+Qe = Latent Heat Flux
+	Qe=S1.MH2O*S1.He*(1/(300*1.115))
+Q = Heat Budget Calculation (multiple varieties)
+	Q1=S1.RN-S1.STK*S1.SBC-S1.EK*S1.SBC-S1.MH2O*S1.He*(1/(300*1.115))
+	Q3=S3.RN-S3.STK*S3.SBC-S3.EK*S3.SBC-S3.MH2O*S3.He*(1/(300*1.115))
+	Q4=S4.RN-S4.STK*S4.SBC-S4.EK*S4.SBC-S4.MH2O*S4.He*(1/(300*1.115))
+	Q6=S6.RN-S6.STK*S6.SBC-S6.EK*S6.SBC-S6.MH2O*S6.He*(1/(300*1.115))
+	Q8=S8.RN-S8.STK*S8.SBC-S8.EK*S8.SBC-S8.MH2O*S8.He*(1/(300*1.115))
+J = Energy Budget Calculation
+	J1 = S1.RN-((S1.EK*S1.SBC)./(S1.MH2O*S1.He*(1/(300*1.115))).*((3.6*(S1.STA-S1.AMB).^.33)+4.1*S1.WS)-(S1.MH2O*S1.He*(1/(300*1.115))))
+	J3 = S3.RN-((S3.EK*S3.SBC)./(S3.MH2O*S3.He*(1/(300*1.115))).*((3.6*(S3.STA-S3.AMB).^.33)+4.1*S3.WS)-(S3.MH2O*S3.He*(1/(300*1.115))))
+	J4 = S4.RN-((S4.EK*S4.SBC)./(S4.MH2O*S4.He*(1/(300*1.115))).*((3.6*(S4.STA-S4.AMB).^.33)+4.1*S4.WS)-(S4.MH2O*S4.He*(1/(300*1.115))))
+	J6 = S6.RN-((S6.EK*S6.SBC)./(S6.MH2O*S6.He*(1/(300*1.115))).*((3.6*(S6.STA-S6.AMB).^.33)+4.1*S6.WS)-(S6.MH2O*S6.He*(1/(300*1.115))))
+	J8 = S8.RN-((S8.EK*S8.SBC)./(S8.MH2O*S8.He*(1/(300*1.115))).*((3.6*(S8.STA-S8.AMB).^.33)+4.1*S8.WS)-(S8.MH2O*S8.He*(1/(300*1.115))))
+JAlt 1= 
+	J1a = S1.RN-((S1.EK*S1.SBC)./(S1.MH2O*S1.He*(1/(300*1.115))).*((3.6*(S1.STA-S1.AMB).^.33)+4.1*S1.WS)-(S1.MH2O*S1.He*(1/(300*1.115))))	
+	J1b = S1.RN-((S1.EK.*S1.SBC)./(S1.MH2O*S1.He*(1/(300*1.115))).*((3.6*(S1.STA-S1.AMB).^.33)+4.1*S1.WS)-(S1.MH2O*S1.He*(1/(300*1.115))))	
+	
+Jalt2 (working?)	
+	J1J = S1.RN-(((S1.EK.*S1.SBC)./(S1.MH2O*S1.He*(1/(300*1.115)))).*((3.6.*(S1.STA-S1.AMB).^.33))+(4.1*S1.WS))-(S1.MH2O*S1.He*(1/(300*1.115)))
+	J3J = S3.RN-(((S3.EK.*S3.SBC)./(S3.MH2O*S3.He*(1/(300*1.115)))).*((3.6.*(S3.STA-S3.AMB).^.33))+(4.1*S3.WS))-(S3.MH2O*S3.He*(1/(300*1.115)))
+	J4J = S4.RN-(((S4.EK.*S4.SBC)./(S4.MH2O*S4.He*(1/(300*1.115)))).*((3.6.*(S4.STA-S4.AMB).^.33))+(4.1*S4.WS))-(S4.MH2O*S4.He*(1/(300*1.115)))
+	J6J = S6.RN-(((S6.EK.*S6.SBC)./(S6.MH2O*S6.He*(1/(300*1.115)))).*((3.6.*(S6.STA-S6.AMB).^.33))+(4.1*S6.WS))-(S6.MH2O*S6.He*(1/(300*1.115)))
+	J8J = S8.RN-(((S8.EK.*S8.SBC)./(S8.MH2O*S8.He*(1/(300*1.115)))).*((3.6.*(S8.STA-S8.AMB).^.33))+(4.1*S8.WS))-(S8.MH2O*S8.He*(1/(300*1.115)))
